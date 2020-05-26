@@ -1,0 +1,462 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="loansModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="branch">
+          <Key>
+            <PropertyRef Name="branch_code" />
+          </Key>
+          <Property Name="branch_code" Type="numeric" Precision="3" Scale="0" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="name" Type="nvarchar" MaxLength="50" />
+          <Property Name="address" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="client">
+          <Key>
+            <PropertyRef Name="client_no" />
+          </Key>
+          <Property Name="client_no" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="name" Type="nvarchar" MaxLength="10" />
+          <Property Name="surname" Type="nvarchar" MaxLength="15" />
+          <Property Name="address" Type="nvarchar" MaxLength="50" />
+          <Property Name="password" Type="nvarchar" MaxLength="5" />
+          <Property Name="emailAddress" Type="nvarchar" MaxLength="15" />
+          <Property Name="authoriyId" Type="int" />
+        </EntityType>
+        <EntityType Name="credit">
+          <Key>
+            <PropertyRef Name="contract_no" />
+          </Key>
+          <Property Name="contract_no" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="client_no" Type="int" />
+          <Property Name="branch_code" Type="numeric" Precision="3" Scale="0" />
+          <Property Name="opening_amount" Type="numeric" Precision="18" Scale="0" />
+          <Property Name="currency" Type="nvarchar" MaxLength="3" />
+          <Property Name="status" Type="nvarchar" MaxLength="2" />
+          <Property Name="start_date" Type="date" />
+          <Property Name="maturity_date" Type="date" />
+        </EntityType>
+        <EntityType Name="diary">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="contract_no" Type="int" />
+          <Property Name="installment_sequence" Type="int" />
+          <Property Name="transaction_type" Type="nvarchar" MaxLength="2" />
+          <Property Name="status" Type="nvarchar" MaxLength="2" />
+          <Property Name="interest_rate" Type="numeric" Precision="2" Scale="0" />
+          <Property Name="interest_amount" Type="numeric" Precision="18" Scale="0" />
+          <Property Name="principal_amount" Type="numeric" Precision="18" Scale="0" />
+          <Property Name="remaining_principal_amount" Type="numeric" Precision="18" Scale="0" />
+          <Property Name="installment_date" Type="date" />
+        </EntityType>
+        <EntityType Name="parameter">
+          <Key>
+            <PropertyRef Name="value" />
+          </Key>
+          <Property Name="value" Type="nvarchar" MaxLength="2" Nullable="false" />
+          <Property Name="name" Type="nvarchar" MaxLength="10" />
+        </EntityType>
+        <EntityType Name="sysdiagrams">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="principal_id" Type="int" Nullable="false" />
+          <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="version" Type="int" />
+          <Property Name="definition" Type="varbinary(max)" />
+        </EntityType>
+        <Association Name="FK_contracts_branches">
+          <End Role="branch" Type="Self.branch" Multiplicity="0..1" />
+          <End Role="credit" Type="Self.credit" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="branch">
+              <PropertyRef Name="branch_code" />
+            </Principal>
+            <Dependent Role="credit">
+              <PropertyRef Name="branch_code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_contracts_clients">
+          <End Role="client" Type="Self.client" Multiplicity="0..1" />
+          <End Role="credit" Type="Self.credit" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="client">
+              <PropertyRef Name="client_no" />
+            </Principal>
+            <Dependent Role="credit">
+              <PropertyRef Name="client_no" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_contracts_parameters">
+          <End Role="parameter" Type="Self.parameter" Multiplicity="0..1" />
+          <End Role="credit" Type="Self.credit" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="parameter">
+              <PropertyRef Name="value" />
+            </Principal>
+            <Dependent Role="credit">
+              <PropertyRef Name="status" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_diary_contracts">
+          <End Role="credit" Type="Self.credit" Multiplicity="0..1" />
+          <End Role="diary" Type="Self.diary" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="credit">
+              <PropertyRef Name="contract_no" />
+            </Principal>
+            <Dependent Role="diary">
+              <PropertyRef Name="contract_no" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_diary_parameters">
+          <End Role="parameter" Type="Self.parameter" Multiplicity="0..1" />
+          <End Role="diary" Type="Self.diary" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="parameter">
+              <PropertyRef Name="value" />
+            </Principal>
+            <Dependent Role="diary">
+              <PropertyRef Name="status" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_diary_parameters1">
+          <End Role="parameter" Type="Self.parameter" Multiplicity="0..1" />
+          <End Role="diary" Type="Self.diary" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="parameter">
+              <PropertyRef Name="value" />
+            </Principal>
+            <Dependent Role="diary">
+              <PropertyRef Name="transaction_type" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="loansModelStoreContainer">
+          <EntitySet Name="branch" EntityType="Self.branch" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="client" EntityType="Self.client" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="credit" EntityType="Self.credit" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="diary" EntityType="Self.diary" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="parameter" EntityType="Self.parameter" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_contracts_branches" Association="Self.FK_contracts_branches">
+            <End Role="branch" EntitySet="branch" />
+            <End Role="credit" EntitySet="credit" />
+          </AssociationSet>
+          <AssociationSet Name="FK_contracts_clients" Association="Self.FK_contracts_clients">
+            <End Role="client" EntitySet="client" />
+            <End Role="credit" EntitySet="credit" />
+          </AssociationSet>
+          <AssociationSet Name="FK_contracts_parameters" Association="Self.FK_contracts_parameters">
+            <End Role="parameter" EntitySet="parameter" />
+            <End Role="credit" EntitySet="credit" />
+          </AssociationSet>
+          <AssociationSet Name="FK_diary_contracts" Association="Self.FK_diary_contracts">
+            <End Role="credit" EntitySet="credit" />
+            <End Role="diary" EntitySet="diary" />
+          </AssociationSet>
+          <AssociationSet Name="FK_diary_parameters" Association="Self.FK_diary_parameters">
+            <End Role="parameter" EntitySet="parameter" />
+            <End Role="diary" EntitySet="diary" />
+          </AssociationSet>
+          <AssociationSet Name="FK_diary_parameters1" Association="Self.FK_diary_parameters1">
+            <End Role="parameter" EntitySet="parameter" />
+            <End Role="diary" EntitySet="diary" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="loansModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="branch">
+          <Key>
+            <PropertyRef Name="branch_code" />
+          </Key>
+          <Property Name="branch_code" Type="Decimal" Precision="3" Scale="0" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="address" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="credits" Relationship="Self.FK_contracts_branches" FromRole="branch" ToRole="credit" />
+        </EntityType>
+        <EntityType Name="client">
+          <Key>
+            <PropertyRef Name="client_no" />
+          </Key>
+          <Property Name="client_no" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="name" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="surname" Type="String" MaxLength="15" FixedLength="false" Unicode="true" />
+          <Property Name="address" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="password" Type="String" MaxLength="5" FixedLength="false" Unicode="true" />
+          <Property Name="emailAddress" Type="String" MaxLength="15" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="credits" Relationship="Self.FK_contracts_clients" FromRole="client" ToRole="credit" />
+          <Property Name="authoriyId" Type="Int32" />
+        </EntityType>
+        <EntityType Name="credit">
+          <Key>
+            <PropertyRef Name="contract_no" />
+          </Key>
+          <Property Name="contract_no" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="client_no" Type="Int32" />
+          <Property Name="branch_code" Type="Decimal" Precision="3" Scale="0" />
+          <Property Name="opening_amount" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="currency" Type="String" MaxLength="3" FixedLength="false" Unicode="true" />
+          <Property Name="status" Type="String" MaxLength="2" FixedLength="false" Unicode="true" />
+          <Property Name="start_date" Type="DateTime" Precision="0" />
+          <Property Name="maturity_date" Type="DateTime" Precision="0" />
+          <NavigationProperty Name="branch" Relationship="Self.FK_contracts_branches" FromRole="credit" ToRole="branch" />
+          <NavigationProperty Name="client" Relationship="Self.FK_contracts_clients" FromRole="credit" ToRole="client" />
+          <NavigationProperty Name="parameter" Relationship="Self.FK_contracts_parameters" FromRole="credit" ToRole="parameter" />
+          <NavigationProperty Name="diaries" Relationship="Self.FK_diary_contracts" FromRole="credit" ToRole="diary" />
+        </EntityType>
+        <EntityType Name="diary">
+          <Key>
+            <PropertyRef Name="id" />
+          </Key>
+          <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="contract_no" Type="Int32" />
+          <Property Name="installment_sequence" Type="Int32" />
+          <Property Name="transaction_type" Type="String" MaxLength="2" FixedLength="false" Unicode="true" />
+          <Property Name="status" Type="String" MaxLength="2" FixedLength="false" Unicode="true" />
+          <Property Name="interest_rate" Type="Decimal" Precision="2" Scale="0" />
+          <Property Name="interest_amount" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="principal_amount" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="remaining_principal_amount" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="installment_date" Type="DateTime" Precision="0" />
+          <NavigationProperty Name="credit" Relationship="Self.FK_diary_contracts" FromRole="diary" ToRole="credit" />
+          <NavigationProperty Name="parameter" Relationship="Self.FK_diary_parameters" FromRole="diary" ToRole="parameter" />
+          <NavigationProperty Name="parameter1" Relationship="Self.FK_diary_parameters1" FromRole="diary" ToRole="parameter" />
+        </EntityType>
+        <EntityType Name="parameter">
+          <Key>
+            <PropertyRef Name="value" />
+          </Key>
+          <Property Name="value" Type="String" MaxLength="2" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="name" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="credits" Relationship="Self.FK_contracts_parameters" FromRole="parameter" ToRole="credit" />
+          <NavigationProperty Name="diaries" Relationship="Self.FK_diary_parameters" FromRole="parameter" ToRole="diary" />
+          <NavigationProperty Name="diaries1" Relationship="Self.FK_diary_parameters1" FromRole="parameter" ToRole="diary" />
+        </EntityType>
+        <EntityType Name="sysdiagram">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="principal_id" Type="Int32" Nullable="false" />
+          <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="version" Type="Int32" />
+          <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+        </EntityType>
+        <Association Name="FK_contracts_branches">
+          <End Role="branch" Type="Self.branch" Multiplicity="0..1" />
+          <End Role="credit" Type="Self.credit" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="branch">
+              <PropertyRef Name="branch_code" />
+            </Principal>
+            <Dependent Role="credit">
+              <PropertyRef Name="branch_code" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_contracts_clients">
+          <End Role="client" Type="Self.client" Multiplicity="0..1" />
+          <End Role="credit" Type="Self.credit" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="client">
+              <PropertyRef Name="client_no" />
+            </Principal>
+            <Dependent Role="credit">
+              <PropertyRef Name="client_no" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_contracts_parameters">
+          <End Role="parameter" Type="Self.parameter" Multiplicity="0..1" />
+          <End Role="credit" Type="Self.credit" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="parameter">
+              <PropertyRef Name="value" />
+            </Principal>
+            <Dependent Role="credit">
+              <PropertyRef Name="status" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_diary_contracts">
+          <End Role="credit" Type="Self.credit" Multiplicity="0..1" />
+          <End Role="diary" Type="Self.diary" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="credit">
+              <PropertyRef Name="contract_no" />
+            </Principal>
+            <Dependent Role="diary">
+              <PropertyRef Name="contract_no" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_diary_parameters">
+          <End Role="parameter" Type="Self.parameter" Multiplicity="0..1" />
+          <End Role="diary" Type="Self.diary" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="parameter">
+              <PropertyRef Name="value" />
+            </Principal>
+            <Dependent Role="diary">
+              <PropertyRef Name="status" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_diary_parameters1">
+          <End Role="parameter" Type="Self.parameter" Multiplicity="0..1" />
+          <End Role="diary" Type="Self.diary" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="parameter">
+              <PropertyRef Name="value" />
+            </Principal>
+            <Dependent Role="diary">
+              <PropertyRef Name="transaction_type" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="loansEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="branches" EntityType="Self.branch" />
+          <EntitySet Name="clients" EntityType="Self.client" />
+          <EntitySet Name="credits" EntityType="Self.credit" />
+          <EntitySet Name="diaries" EntityType="Self.diary" />
+          <EntitySet Name="parameters" EntityType="Self.parameter" />
+          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagram" />
+          <AssociationSet Name="FK_contracts_branches" Association="Self.FK_contracts_branches">
+            <End Role="branch" EntitySet="branches" />
+            <End Role="credit" EntitySet="credits" />
+          </AssociationSet>
+          <AssociationSet Name="FK_contracts_clients" Association="Self.FK_contracts_clients">
+            <End Role="client" EntitySet="clients" />
+            <End Role="credit" EntitySet="credits" />
+          </AssociationSet>
+          <AssociationSet Name="FK_contracts_parameters" Association="Self.FK_contracts_parameters">
+            <End Role="parameter" EntitySet="parameters" />
+            <End Role="credit" EntitySet="credits" />
+          </AssociationSet>
+          <AssociationSet Name="FK_diary_contracts" Association="Self.FK_diary_contracts">
+            <End Role="credit" EntitySet="credits" />
+            <End Role="diary" EntitySet="diaries" />
+          </AssociationSet>
+          <AssociationSet Name="FK_diary_parameters" Association="Self.FK_diary_parameters">
+            <End Role="parameter" EntitySet="parameters" />
+            <End Role="diary" EntitySet="diaries" />
+          </AssociationSet>
+          <AssociationSet Name="FK_diary_parameters1" Association="Self.FK_diary_parameters1">
+            <End Role="parameter" EntitySet="parameters" />
+            <End Role="diary" EntitySet="diaries" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="loansModelStoreContainer" CdmEntityContainer="loansEntities">
+          <EntitySetMapping Name="branches">
+            <EntityTypeMapping TypeName="loansModel.branch">
+              <MappingFragment StoreEntitySet="branch">
+                <ScalarProperty Name="branch_code" ColumnName="branch_code" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="address" ColumnName="address" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="clients">
+            <EntityTypeMapping TypeName="loansModel.client">
+              <MappingFragment StoreEntitySet="client">
+                <ScalarProperty Name="authoriyId" ColumnName="authoriyId" />
+                <ScalarProperty Name="client_no" ColumnName="client_no" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="surname" ColumnName="surname" />
+                <ScalarProperty Name="address" ColumnName="address" />
+                <ScalarProperty Name="password" ColumnName="password" />
+                <ScalarProperty Name="emailAddress" ColumnName="emailAddress" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="credits">
+            <EntityTypeMapping TypeName="loansModel.credit">
+              <MappingFragment StoreEntitySet="credit">
+                <ScalarProperty Name="contract_no" ColumnName="contract_no" />
+                <ScalarProperty Name="client_no" ColumnName="client_no" />
+                <ScalarProperty Name="branch_code" ColumnName="branch_code" />
+                <ScalarProperty Name="opening_amount" ColumnName="opening_amount" />
+                <ScalarProperty Name="currency" ColumnName="currency" />
+                <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="start_date" ColumnName="start_date" />
+                <ScalarProperty Name="maturity_date" ColumnName="maturity_date" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="diaries">
+            <EntityTypeMapping TypeName="loansModel.diary">
+              <MappingFragment StoreEntitySet="diary">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="contract_no" ColumnName="contract_no" />
+                <ScalarProperty Name="installment_sequence" ColumnName="installment_sequence" />
+                <ScalarProperty Name="transaction_type" ColumnName="transaction_type" />
+                <ScalarProperty Name="status" ColumnName="status" />
+                <ScalarProperty Name="interest_rate" ColumnName="interest_rate" />
+                <ScalarProperty Name="interest_amount" ColumnName="interest_amount" />
+                <ScalarProperty Name="principal_amount" ColumnName="principal_amount" />
+                <ScalarProperty Name="remaining_principal_amount" ColumnName="remaining_principal_amount" />
+                <ScalarProperty Name="installment_date" ColumnName="installment_date" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="parameters">
+            <EntityTypeMapping TypeName="loansModel.parameter">
+              <MappingFragment StoreEntitySet="parameter">
+                <ScalarProperty Name="value" ColumnName="value" />
+                <ScalarProperty Name="name" ColumnName="name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="sysdiagrams">
+            <EntityTypeMapping TypeName="loansModel.sysdiagram">
+              <MappingFragment StoreEntitySet="sysdiagrams">
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="principal_id" ColumnName="principal_id" />
+                <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
+                <ScalarProperty Name="version" ColumnName="version" />
+                <ScalarProperty Name="definition" ColumnName="definition" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
