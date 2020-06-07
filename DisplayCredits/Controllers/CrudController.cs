@@ -1,16 +1,17 @@
-﻿using System;
+﻿using DisplayCredits.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Web;
+using System.Web.Http;
 using System.Web.Mvc;
-using DisplayCredits.Models;
 
 namespace DisplayCredits.Controllers
 {
-    public class CreditController : Controller
+    public class CrudController : Controller
     {
-        // GET: Credit
+        // GET: Crud
         public ActionResult Index()
         {
             if (Session["personelId"] == null || Session["yetkiId"] == null)
@@ -18,18 +19,11 @@ namespace DisplayCredits.Controllers
                 return RedirectToActionPermanent("Index", "Login");
             }
 
-
-            int perId = (int)Session["personelId"];
-            int authId = (int)Session["yetkiId"];
-
-            //var listCont = new ListsCreditController();
-            //var result = listCont.getCredit(Convert.ToInt32(perId));
-            //return View();
-            IEnumerable<JoinClass> jc = null;
+            IEnumerable<JoinClass> crdObj = null;
             HttpClient hc = new HttpClient();
-            hc.BaseAddress = new Uri("https://localhost:44300/api/ListsCredit/");
+            hc.BaseAddress = new Uri("https://localhost:44300/api/CreditCrud/");
 
-            var consumeApi = hc.GetAsync($"getCredit?clntNo={perId}&authId={authId}");
+            var consumeApi = hc.GetAsync("CreditCrud");
             consumeApi.Wait();
 
             var readData = consumeApi.Result;
@@ -37,46 +31,27 @@ namespace DisplayCredits.Controllers
             {
                 var displayData = readData.Content.ReadAsAsync<IList<JoinClass>>();
                 displayData.Wait();
-                jc = displayData.Result;
+                crdObj = displayData.Result;
             }
-            return View(jc);
-
+            return View(crdObj);
         }
 
         public ActionResult Create()
         {
-            CreditViewModel creditModel = new CreditViewModel();
-
-            HttpClient hc = new HttpClient();
-            hc.BaseAddress = new Uri("https://localhost:44300/api/ListsCredit/");
-            var consumeApi = hc.GetAsync("getClients");
-            consumeApi.Wait();
-
-            var readData = consumeApi.Result;
-            if (readData.IsSuccessStatusCode)
-            {
-                var displayData = readData.Content.ReadAsAsync<CreditViewModel>();
-                displayData.Wait();
-                creditModel = displayData.Result;
-            }
-            return View(creditModel);
+            return View();
         }
 
         [System.Web.Mvc.HttpPost]
-        public ActionResult Create(CreditViewModel insertCredit)
+        public ActionResult Create(credit insertCredit)
         {
             if (Session["personelId"] == null || Session["yetkiId"] == null)
             {
                 return RedirectToActionPermanent("Index", "Login");
             }
             HttpClient hc = new HttpClient();
-            hc.BaseAddress = new Uri("https://localhost:44300/api/ListsCredit/");
+            hc.BaseAddress = new Uri("https://localhost:44300/api/CreditCrud/");
 
-
-            // bekleyen
-            insertCredit.Credit.status = "W";
-
-            var insertRecord = hc.PostAsJsonAsync<credit>("ListsCredit", insertCredit.Credit);
+            var insertRecord = hc.PostAsJsonAsync<credit>("CreditCrud", insertCredit);
             insertRecord.Wait();
 
             var saveData = insertRecord.Result;
@@ -85,40 +60,38 @@ namespace DisplayCredits.Controllers
                 return RedirectToAction("Index");
             }
 
-            return View(insertCredit);
+            return View("Create");
         }
 
-        [System.Web.Mvc.HttpGet]
+        //1.si get edit metod
         public ActionResult Edit(int id)
         {
             if (Session["personelId"] == null || Session["yetkiId"] == null)
             {
                 return RedirectToActionPermanent("Index", "Login");
             }
-
-            CreditViewModel creditModel = new CreditViewModel();
-
+            IEnumerable<JoinClass> crdObj = null;
             HttpClient hc = new HttpClient();
-            hc.BaseAddress = new Uri("https://localhost:44300/api/ListsCredit/");
-            var consumeApi = hc.GetAsync($"getSelectedCredit?creditId={id}");
+            hc.BaseAddress = new Uri("https://localhost:44300/api/");
+            var consumeApi = hc.GetAsync("CreditCrud?id=" + id.ToString());
             consumeApi.Wait();
 
             var readData = consumeApi.Result;
             if (readData.IsSuccessStatusCode)
             {
-                var displayData = readData.Content.ReadAsAsync<CreditViewModel>();
+                var displayData = readData.Content.ReadAsAsync<IList<JoinClass>>();
                 displayData.Wait();
-                creditModel = displayData.Result;
+                crdObj = displayData.Result;
             }
-            return View(creditModel);
+            return View(crdObj);
         }
 
         [System.Web.Mvc.HttpPost]
-        public ActionResult Edit(CreditViewModel creditModel)
+        public ActionResult Edit(credit ct)
         {
             HttpClient hc = new HttpClient();
-            hc.BaseAddress = new Uri("https://localhost:44300/api/ListsCredit/");
-            var insertRecord = hc.PutAsJsonAsync("ListsCredit", creditModel.Credit);
+            hc.BaseAddress = new Uri("https://localhost:44300/api/CreditCrud/");
+            var insertRecord = hc.PutAsJsonAsync<credit>("CreditCrud", ct);
             insertRecord.Wait();
 
             var saveData = insertRecord.Result;
@@ -131,15 +104,15 @@ namespace DisplayCredits.Controllers
                 ViewBag.message = "Kredi güncellenemedi";
             }
 
-            return View(creditModel);
+            return View(ct);
         }
 
         public ActionResult Delete(int id)
         {
             HttpClient hc = new HttpClient();
-            hc.BaseAddress = new Uri("https://localhost:44300/api/ListsCredit");
+            hc.BaseAddress = new Uri("https://localhost:44300/api/CreditCrud");
 
-            var delRecord = hc.DeleteAsync("ListsCredit/" + id.ToString());
+            var delRecord = hc.DeleteAsync("CreditCrud/" + id.ToString());
             delRecord.Wait();
 
             var displayData = delRecord.Result;
@@ -149,5 +122,29 @@ namespace DisplayCredits.Controllers
             }
             return View("Index");
         }
+
+        ////public ActionResult Details(int id)
+        ////{
+        ////    if (Session["personelId"] == null || Session["yetkiId"] == null)
+        ////    {
+        ////        return RedirectToActionPermanent("Index", "Login");
+        ////    }
+
+        ////    diary crdObj = null;
+        ////    HttpClient hc = new HttpClient();
+        ////    hc.BaseAddress = new Uri("https://localhost:44300/api/");
+        ////    var consumeApi = hc.GetAsync("CreditCrud?id=" + id.ToString());
+        ////    consumeApi.Wait();
+
+        ////    var readData = consumeApi.Result;
+        ////    if (readData.IsSuccessStatusCode)
+        ////    {
+        ////        var displayData = readData.Content.ReadAsAsync<diary>();
+        ////        displayData.Wait();
+        ////        crdObj = displayData.Result;
+        ////    }
+        ////    return View(crdObj);
+        ////}
+
     }
 }

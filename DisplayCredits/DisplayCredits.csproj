@@ -171,6 +171,8 @@
       <DependentUpon>CredModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Controllers\CreditController.cs" />
+    <Compile Include="Controllers\CreditCrudController.cs" />
+    <Compile Include="Controllers\CrudController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ListsCreditController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
@@ -199,12 +201,8 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\Branch.cs" />
-    <Compile Include="Models\Client.cs" />
-    <Compile Include="Models\Credit.cs" />
-    <Compile Include="Models\Diary.cs" />
+    <Compile Include="Models\CreditViewModel.cs" />
     <Compile Include="Models\JoinClass.cs" />
-    <Compile Include="Models\Parameter.cs" />
     <Compile Include="parameter.cs">
       <DependentUpon>CredModel.tt</DependentUpon>
     </Compile>
@@ -221,6 +219,15 @@
     <Content Include="Content\bootstrap-reboot.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\images\ui-icons_444444_256x240.png" />
+    <Content Include="Content\images\ui-icons_555555_256x240.png" />
+    <Content Include="Content\images\ui-icons_777620_256x240.png" />
+    <Content Include="Content\images\ui-icons_777777_256x240.png" />
+    <Content Include="Content\images\ui-icons_cc0000_256x240.png" />
+    <Content Include="Content\images\ui-icons_ffffff_256x240.png" />
+    <Content Include="Content\jquery-ui.css" />
+    <Content Include="Content\jquery-ui.structure.css" />
+    <Content Include="Content\jquery-ui.theme.css" />
     <Content Include="Content\signin.css" />
     <Content Include="Content\style.css" />
     <Content Include="CredModel.Context.tt">
@@ -289,6 +296,7 @@
     <Content Include="Scripts\jquery-3.5.1.min.js" />
     <Content Include="Scripts\jquery-3.5.1.slim.js" />
     <Content Include="Scripts\jquery-3.5.1.slim.min.js" />
+    <Content Include="Scripts\jquery-ui.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\popper-utils.js" />
     <Content Include="Scripts\popper-utils.min.js" />
@@ -385,6 +393,12 @@
     <Content Include="Scripts\popper.js.map" />
     <Content Include="Scripts\popper-utils.min.js.map" />
     <Content Include="Scripts\popper-utils.js.map" />
+    <Content Include="Views\Crud\Index.cshtml" />
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Credit\Create.cshtml" />
+    <Content Include="Views\Crud\Details.cshtml" />
+    <Content Include="Views\Credit\CreateDeneme.cshtml" />
+    <Content Include="Views\Credit\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

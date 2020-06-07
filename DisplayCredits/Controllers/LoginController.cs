@@ -29,7 +29,7 @@ namespace DisplayCredits.Controllers
 
 
                 //1 ise kullanıcı
-                if (personel.authoriyId == 1 || personel.authoriyId == 2)
+                if (personel.authoriyId == 1 || personel.authoriyId == 2 || personel.authoriyId == 3)
                 {
                     return RedirectToAction("Index", "Credit");
                 }

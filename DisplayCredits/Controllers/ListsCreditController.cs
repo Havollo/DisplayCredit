@@ -4,25 +4,53 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using System.Web.Mvc;
 using DisplayCredits.Models;
 
 namespace DisplayCredits.Controllers
 {
     public class ListsCreditController : ApiController
     {
+        loansEntities le = new loansEntities();
+
+        public IHttpActionResult getClients()
+        {
+            IList<branch> branchList = le.branches.ToList();
+            IList<SelectListItem> clientList = le.clients.Where(x => x.authoriyId == 1)
+                .Select(x => new SelectListItem
+                {
+                    Value = x.client_no.ToString(),
+                    Text = x.name + " " + x.surname
+                }).ToList();
+
+            CreditViewModel creditModel = new CreditViewModel
+            {
+                Clients = clientList,
+                Branches = branchList,
+                Currencies = new List<string>
+                {
+                    "TL",
+                    "USD",
+                    "EUR"
+                }
+            };
+
+            return Ok(creditModel);
+        }
+
         public IHttpActionResult getCredit(int clntNo, int authId)
         {
-            loansEntities nd = new loansEntities();
 
-            IList<branch> branchList = nd.branches.ToList();
-            IList<client> clientList = nd.clients.ToList();
-            IList<credit> creditList = nd.credits.ToList();
-            IList<diary> diaryList = nd.diaries.ToList();
-            IList<parameter> parameterList = nd.parameters.ToList();
+
+            IList<branch> branchList = le.branches.ToList();
+            IList<client> clientList = le.clients.ToList();
+            IList<credit> creditList = le.credits.ToList();
+            IList<diary> diaryList = le.diaries.ToList();
+            IList<parameter> parameterList = le.parameters.ToList();
 
             IEnumerable<JoinClass> query = null;
 
-            if (authId == 2)
+            if (authId == 2 || authId == 3)
             {
                 query = from crd in creditList
                         join clnt in clientList on crd.client_no equals clnt.client_no into table1
@@ -49,19 +77,82 @@ namespace DisplayCredits.Controllers
 
             return Ok(query);
 
+        }
 
-                        //IList<Credit> crdObj = nd.credits.Include("credit").Select(x => new Credit()
-                        //{
-                        //    ContractNo = x.contract_no,
-                        //    ClientNo = x.client_no,
-                        //    BranchCode = x.branch_code,
-                        //    OpeningAmount = x.opening_amount,
-                        //    Currency = x.currency,
-                        //    Status = x.status,
-                        //    StartDate = x.start_date,
-                        //    MaturityDate = x.maturity_date
-                        //}).ToList<Credit>();
-                        //return Ok(crdObj);
+        [System.Web.Mvc.HttpPost]
+        public IHttpActionResult creditInsert(credit creditInsert)
+        {
+            le.credits.Add(creditInsert);
+            le.SaveChanges();
+            return Ok();
+        }
+
+        public IHttpActionResult Put(credit ct)
+        {
+            var updateCrdt = le.credits.Where(x => x.contract_no == ct.contract_no).FirstOrDefault<credit>();
+            if (updateCrdt != null)
+            {
+                //updateCrdt.contract_no = ct.ContractNo;
+                //updateCrdt.client_no = ct.ClientNo;
+                //updateCrdt.branch_code = ct.BranchCode;
+                //updateCrdt.opening_amount = ct.OpeningAmount;
+                //updateCrdt.currency = ct.Currency;
+                //updateCrdt.status = ct.Status;
+                //updateCrdt.start_date = ct.StartDate;
+                //updateCrdt.maturity_date = ct.MaturityDate;
+                updateCrdt.contract_no = ct.contract_no;
+                updateCrdt.client_no = ct.client_no;
+                updateCrdt.branch_code = ct.branch_code;
+                updateCrdt.opening_amount = ct.opening_amount;
+                updateCrdt.currency = ct.currency;
+                updateCrdt.status = ct.status;
+                updateCrdt.start_date = ct.start_date;
+                updateCrdt.maturity_date = ct.maturity_date;
+                le.SaveChanges();
+            }
+            else
+            {
+                return NotFound();
+            }
+            return Ok();
+        }
+
+        public IHttpActionResult Delete(int id)
+        {
+            var creditDel = le.credits.Where(x => x.contract_no == id).FirstOrDefault();
+            le.Entry(creditDel).State = System.Data.Entity.EntityState.Deleted;
+            le.SaveChanges();
+            return Ok();
+        }
+        public IHttpActionResult getSelectedCredit(int creditId)
+        {
+            IList<branch> branchList = le.branches.ToList();
+            IList<client> clientList = le.clients.ToList();
+            IList<credit> creditList = le.credits.ToList();
+            IList<parameter> parameterList = le.parameters.ToList();
+
+            credit credit = creditList.Where(x => x.contract_no == creditId)
+                .FirstOrDefault();
+
+            client client = clientList.Where(x => x.client_no == credit.client_no)
+                .FirstOrDefault();
+
+            CreditViewModel creditModel = new CreditViewModel
+            {
+                Branches = branchList,
+                Parameters = parameterList,
+                Credit = credit,
+                Client = client,
+                Currencies = new List<string>
+                {
+                    "TL",
+                    "USD",
+                    "EUR"
+                }
+            };
+
+
+            return Ok(creditModel);
         }
     }
 }
