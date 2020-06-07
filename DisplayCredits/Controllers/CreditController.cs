@@ -91,11 +91,6 @@ namespace DisplayCredits.Controllers
         [System.Web.Mvc.HttpGet]
         public ActionResult Edit(int id)
         {
-            if (Session["personelId"] == null || Session["yetkiId"] == null)
-            {
-                return RedirectToActionPermanent("Index", "Login");
-            }
-
             CreditViewModel creditModel = new CreditViewModel();
 
             HttpClient hc = new HttpClient();
