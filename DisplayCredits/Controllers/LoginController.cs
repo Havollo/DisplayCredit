@@ -26,17 +26,7 @@ namespace DisplayCredits.Controllers
                 Session["personelId"] = personel.client_no;
                 Session["yetkiId"] = personel.authoriyId;
                 Session["kullaniciAdi"] = personel.name + " " + personel.surname;
-
-
-                //1 ise kullanıcı
-                if (personel.authoriyId == 1 || personel.authoriyId == 2 || personel.authoriyId == 3)
-                {
-                    return RedirectToAction("Index", "Credit");
-                }
-                else
-                {
-                    return RedirectToAction("Index", "Login");
-                }
+                return RedirectToAction("Index", "Credit");
             }
             return View();
         }

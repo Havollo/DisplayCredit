@@ -35,7 +35,6 @@
 
                 <span class="text-white" style="margin-right:20px">@Session["kullaniciAdi"]</span>
 
-
                 <form class="form-inline">
                     <input class="btn btn-outline-light my-2 my-sm-0" onclick="location.href='@Url.Action("Logout","Login")'" type="button" value="Çıkış" />
                 </form>
@@ -46,13 +45,11 @@
     <!-- container -->
     <main role="main" class="container mb-5">
         <div class="my-3 p-3 bg-white rounded shadow-sm">
-            @*@Html.ActionLink("Kredi Girişi", "Create")*@
-
             @{
+                <!--2:admin 3:editor kullanıcıları -->
                 if ((int)@Session["yetkiId"] == 2 || (int)@Session["yetkiId"] == 3)
 
                 {
-
                     <a href="/Credit/Create" class="btn btn-primary mb-3">Kredi Girişi</a>
                 }
             }
@@ -99,18 +96,16 @@
                         </td>
                         <td>
                             @{
+                                <!--2:admin 3:editor kullanıcıları -->
                                 if ((int)@Session["yetkiId"] == 2 || (int)@Session["yetkiId"] == 3)
 
                                 {
-
                                     @Html.ActionLink("Güncelle | ", "Edit", new { id = item.GetCredit.contract_no });
 
                                     @Html.ActionLink("Sil", "Delete", new { id = item.GetCredit.contract_no });
                                 }
                             }
                         </td>
-
-
                     </tr>
                 }
             </table>

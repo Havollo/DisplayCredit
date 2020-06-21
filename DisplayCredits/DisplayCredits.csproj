@@ -171,8 +171,6 @@
       <DependentUpon>CredModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Controllers\CreditController.cs" />
-    <Compile Include="Controllers\CreditCrudController.cs" />
-    <Compile Include="Controllers\CrudController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ListsCreditController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
@@ -393,16 +391,12 @@
     <Content Include="Scripts\popper.js.map" />
     <Content Include="Scripts\popper-utils.min.js.map" />
     <Content Include="Scripts\popper-utils.js.map" />
-    <Content Include="Views\Crud\Index.cshtml" />
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Credit\Create.cshtml" />
-    <Content Include="Views\Crud\Details.cshtml" />
-    <Content Include="Views\Credit\CreateDeneme.cshtml" />
     <Content Include="Views\Credit\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\CreditLists\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

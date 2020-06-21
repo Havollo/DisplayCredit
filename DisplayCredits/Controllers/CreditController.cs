@@ -10,7 +10,7 @@ namespace DisplayCredits.Controllers
 {
     public class CreditController : Controller
     {
-        // GET: Credit
+        [System.Web.Mvc.HttpGet]
         public ActionResult Index()
         {
             if (Session["personelId"] == null || Session["yetkiId"] == null)
@@ -18,13 +18,9 @@ namespace DisplayCredits.Controllers
                 return RedirectToActionPermanent("Index", "Login");
             }
 
-
             int perId = (int)Session["personelId"];
             int authId = (int)Session["yetkiId"];
 
-            //var listCont = new ListsCreditController();
-            //var result = listCont.getCredit(Convert.ToInt32(perId));
-            //return View();
             IEnumerable<JoinClass> jc = null;
             HttpClient hc = new HttpClient();
             hc.BaseAddress = new Uri("https://localhost:44300/api/ListsCredit/");
@@ -40,16 +36,16 @@ namespace DisplayCredits.Controllers
                 jc = displayData.Result;
             }
             return View(jc);
-
         }
 
+        [System.Web.Mvc.HttpGet]
         public ActionResult Create()
         {
             CreditViewModel creditModel = new CreditViewModel();
 
             HttpClient hc = new HttpClient();
             hc.BaseAddress = new Uri("https://localhost:44300/api/ListsCredit/");
-            var consumeApi = hc.GetAsync("getClients");
+            var consumeApi = hc.GetAsync("getEntityList");
             consumeApi.Wait();
 
             var readData = consumeApi.Result;
@@ -72,10 +68,10 @@ namespace DisplayCredits.Controllers
             HttpClient hc = new HttpClient();
             hc.BaseAddress = new Uri("https://localhost:44300/api/ListsCredit/");
 
-
             // bekleyen
             insertCredit.Credit.status = "W";
 
+            //insertCredit metodu çağrılıyor ve veritabanında create işlemi gerçekleştiriliyor.
             var insertRecord = hc.PostAsJsonAsync<credit>("ListsCredit", insertCredit.Credit);
             insertRecord.Wait();
 
@@ -84,7 +80,6 @@ namespace DisplayCredits.Controllers
             {
                 return RedirectToAction("Index");
             }
-
             return View(insertCredit);
         }
 
@@ -125,10 +120,10 @@ namespace DisplayCredits.Controllers
             {
                 ViewBag.message = "Kredi güncellenemedi";
             }
-
             return View(creditModel);
         }
 
+        [System.Web.Mvc.HttpPost]
         public ActionResult Delete(int id)
         {
             HttpClient hc = new HttpClient();

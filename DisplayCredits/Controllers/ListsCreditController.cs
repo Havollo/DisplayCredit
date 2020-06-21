@@ -13,7 +13,8 @@ namespace DisplayCredits.Controllers
     {
         loansEntities le = new loansEntities();
 
-        public IHttpActionResult getClients()
+        //comboboxların doldurulması için; müşteri, şube ve döviz cinslerini listeler.
+        public IHttpActionResult getEntityList()
         {
             IList<branch> branchList = le.branches.ToList();
             IList<SelectListItem> clientList = le.clients.Where(x => x.authoriyId == 1)
@@ -40,8 +41,6 @@ namespace DisplayCredits.Controllers
 
         public IHttpActionResult getCredit(int clntNo, int authId)
         {
-
-
             IList<branch> branchList = le.branches.ToList();
             IList<client> clientList = le.clients.ToList();
             IList<credit> creditList = le.credits.ToList();
@@ -50,6 +49,7 @@ namespace DisplayCredits.Controllers
 
             IEnumerable<JoinClass> query = null;
 
+            //2:admin 3:editor kullanıcısı
             if (authId == 2 || authId == 3)
             {
                 query = from crd in creditList
@@ -61,7 +61,7 @@ namespace DisplayCredits.Controllers
                         from prmtr in table3.DefaultIfEmpty()
                         select new JoinClass { GetCredit = crd, GetClient = clnt, GetBranch = brnch, GetParameter = prmtr };
             }
-            else
+            else//müşteri girişi
             {
                 query = from crd in creditList
                         where crd.client_no == clntNo
@@ -73,10 +73,7 @@ namespace DisplayCredits.Controllers
                         from prmtr in table3.DefaultIfEmpty()
                         select new JoinClass { GetCredit = crd, GetClient = clnt, GetBranch = brnch, GetParameter = prmtr };
             }
-
-
             return Ok(query);
-
         }
 
         [System.Web.Mvc.HttpPost]
@@ -92,14 +89,6 @@ namespace DisplayCredits.Controllers
             var updateCrdt = le.credits.Where(x => x.contract_no == ct.contract_no).FirstOrDefault<credit>();
             if (updateCrdt != null)
             {
-                //updateCrdt.contract_no = ct.ContractNo;
-                //updateCrdt.client_no = ct.ClientNo;
-                //updateCrdt.branch_code = ct.BranchCode;
-                //updateCrdt.opening_amount = ct.OpeningAmount;
-                //updateCrdt.currency = ct.Currency;
-                //updateCrdt.status = ct.Status;
-                //updateCrdt.start_date = ct.StartDate;
-                //updateCrdt.maturity_date = ct.MaturityDate;
                 updateCrdt.contract_no = ct.contract_no;
                 updateCrdt.client_no = ct.client_no;
                 updateCrdt.branch_code = ct.branch_code;
